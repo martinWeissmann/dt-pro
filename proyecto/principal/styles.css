@@ -1,0 +1,114 @@
+/* Estilo base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Cabecera */
+.header {
+  background: #1a73e8;
+  color: #fff;
+  padding: 1rem 0;
+}
+
+.header h1 {
+  text-align: center;
+}
+
+.nav ul {
+  list-style: none;
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.nav ul li {
+  display: inline;
+  margin: 0 1rem;
+}
+
+.nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.nav ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Sección Hero */
+.hero {
+  background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
+  color: #fff;
+  text-align: center;
+  padding: 5rem 0;
+}
+
+.hero h2 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.hero .btn {
+  display: inline-block;
+  background: #1a73e8;
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.hero .btn:hover {
+  background: #0f57c4;
+}
+
+/* Secciones */
+section {
+  padding: 2rem 0;
+}
+
+section h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+section p, section ul {
+  text-align: center;
+  margin-top: 0.5rem;
+}
+
+.services ul {
+  list-style: none;
+  padding: 0;
+}
+
+.services ul li {
+  margin: 0.5rem 0;
+}
+
+/* Footer */
+.footer {
+  background: #333;
+  color: #fff;
+  text-align: center;
+  padding: 1rem 0;
+}
