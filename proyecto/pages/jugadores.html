@@ -3,49 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DT PRO - Equipos</title>
-    <link rel="stylesheet" href="..//styles/equipos.css">
+    <title>DT PRO - Jugadores</title>
+    <link rel="stylesheet" href="../styles/jugadores.css">
 </head>
 <body>
     <header>
-        <h1>DT PRO - Gestión de Equipos</h1>
+        <h1>DT PRO - Gestión de Jugadores</h1>
         <nav>
-            <a href="equipos.html" class="active">Equipos</a>
-            <a href="jugadores.html">Jugadores</a>
+            <a href="equipos.html">Equipos</a>
+            <a href="jugadores.html" class="active">Jugadores</a>
             <a href="partidos.html">Partidos</a>
             <a href="estadisticas.html">Estadísticas</a>
         </nav>
     </header>
     <main>
-        <section class="equipos-container">
-            <h2>Lista de Equipos</h2>
+        <section class="jugadores-container">
+            <h2>Lista de Jugadores</h2>
             <table>
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Nombre del Equipo</th>
-                        <th>Ciudad</th>
+                        <th>Nombre</th>
+                        <th>Edad</th>
+                        <th>Posición</th>
+                        <th>Equipo</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>1</td>
+                        <td>Juan Pérez</td>
+                        <td>24</td>
+                        <td>Delantero</td>
                         <td>FC Tigres</td>
-                        <td>Buenos Aires</td>
                         <td>
                             <button class="btn-edit">Editar</button>
                             <button class="btn-delete">Eliminar</button>
                         </td>
                     </tr>
-                    <!-- Más equipos -->
+                    <!-- Más jugadores -->
                 </tbody>
             </table>
-            <button class="btn-add">Agregar Equipo</button>
+            <button class="btn-add">Agregar Jugador</button>
         </section>
     </main>
     <footer>
-        
+       
     </footer>
 </body>
 </html>
