@@ -1,0 +1,92 @@
+/* Estilo base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+    background: #f9fbfd;
+    line-height: 1.6;
+  }
+  
+  .container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 4rem 0;
+  }
+  
+  /* Sección Sobre Nosotros */
+  .about-section {
+    background: linear-gradient(120deg, #1a73e8, #4caf50);
+    color: #fff;
+    padding: 4rem 0;
+  }
+  
+  .about-content {
+    flex: 1;
+    max-width: 50%;
+  }
+  
+  .section-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  
+  .section-description {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+  }
+  
+  .section-description .highlight {
+    font-weight: bold;
+    color: #ffd700;
+  }
+  
+  .btn {
+    display: inline-block;
+    background: #ffd700;
+    color: #333;
+    padding: 0.8rem 1.5rem;
+    text-decoration: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1.2rem;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn:hover {
+    background: #ffc107;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Imagen */
+  .about-image {
+    flex: 1;
+    max-width: 50%;
+    text-align: center;
+  }
+  
+  .about-image img {
+    width: 100%;
+    max-width: 500px;
+    border-radius: 15px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+  }
+  
+  .about-image img:hover {
+    transform: scale(1.05);
+  }
+  
