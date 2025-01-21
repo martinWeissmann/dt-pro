@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro e Inicio de Sesión</title>
-  <link rel="stylesheet" href="..//styles/acceder.css">
+  <link rel="stylesheet" href="../styles/acceder.css">
 </head>
 <body>
   <div class="container">
@@ -43,6 +43,82 @@
     <p id="message"></p>
   </div>
 
-  <script src="script.js"></script>
+  <script type="module">
+    // Importar Supabase
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Configuración de Supabase
+    const supabaseUrl = 'https://imokfxicqzmedegxskxp.supabase.co'; // Reemplazar con tu URL de Supabase
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imltb2tmeGljcXptZWRlZ3hza3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTY0MTMsImV4cCI6MjA1Mjg5MjQxM30.Hu763dw72zipJztCLyKy66fuwoW0_GTaLkw8PwKb_8s'; // Reemplazar con tu clave de API
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Seleccionar elementos del DOM
+    const registerForm = document.getElementById('register-form');
+    const loginForm = document.getElementById('login-form');
+    const showRegister = document.getElementById('show-register');
+    const showLogin = document.getElementById('show-login');
+    const message = document.getElementById('message');
+
+    // Funciones para mostrar/ocultar formularios
+    showRegister.addEventListener('click', (e) => {
+      e.preventDefault();
+      registerForm.classList.remove('hidden');
+      loginForm.classList.add('hidden');
+    });
+
+    showLogin.addEventListener('click', (e) => {
+      e.preventDefault();
+      loginForm.classList.remove('hidden');
+      registerForm.classList.add('hidden');
+    });
+
+    // Registro
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('register-email').value;
+      const password = document.getElementById('register-password').value;
+
+      try {
+        const { user, error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+          message.textContent = `Error: ${error.message}`;
+          message.style.color = 'red';
+        } else {
+          message.textContent = 'Registro exitoso. Redirigiendo...';
+          message.style.color = 'green';
+          setTimeout(() => {
+            window.location.href = 'pagina-principal.html'; // Página principal después del registro
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error en el registro:', err);
+      }
+    });
+
+    // Inicio de sesión
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        const { session, error } = await supabase.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          message.textContent = `Error: ${error.message}`;
+          message.style.color = 'red';
+        } else {
+          message.textContent = 'Inicio de sesión exitoso. Redirigiendo...';
+          message.style.color = 'green';
+          setTimeout(() => {
+            window.location.href = 'dashboard.html'; // Página principal después del inicio de sesión
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error en el inicio de sesión:', err);
+      }
+    });
+  </script>
 </body>
 </html>
