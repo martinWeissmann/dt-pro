@@ -1,117 +1,96 @@
-// Referencias a los elementos
-const teamForm = document.getElementById("team-form");
-const teamNameInput = document.getElementById("team-name");
-const teamCoachInput = document.getElementById("team-coach");
-const teamCategorySelect = document.getElementById("team-category");
-const teamList = document.getElementById("team-list");
-const addTeamBtn = document.getElementById("add-team-btn");
-const updateTeamBtn = document.getElementById("update-team-btn");
+document.addEventListener('DOMContentLoaded', () => {
+  const addButton = document.querySelector('.btn-add'); // Botón "Agregar Equipo"
+  const tableBody = document.querySelector('table tbody'); // Cuerpo de la tabla
 
-// Identificador del equipo que se está editando
-let currentEditIndex = null;
+  // Cargar datos guardados al iniciar
+  const loadTeams = () => {
+    const teams = JSON.parse(localStorage.getItem('teams')) || [];
+    teams.forEach((team, index) => addTeamToTable(team.name, team.city, index + 1));
+  };
 
-// Cargar equipos al inicio
-document.addEventListener("DOMContentLoaded", loadTeams);
+  // Guardar datos en localStorage
+  const saveTeams = () => {
+    const teams = Array.from(tableBody.children).map((row) => ({
+      name: row.children[1].textContent,
+      city: row.children[2].textContent,
+    }));
+    localStorage.setItem('teams', JSON.stringify(teams));
+  };
 
-// Manejar envío del formulario para agregar o actualizar
-teamForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+  // Agregar un equipo a la tabla
+  const addTeamToTable = (name, city, number) => {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>${number}</td>
+      <td contenteditable="true">${name}</td>
+      <td contenteditable="true">${city}</td>
+      <td>
+        <button class="btn-edit">Editar</button>
+        <button class="btn-delete">Eliminar</button>
+      </td>
+    `;
+    tableBody.appendChild(newRow);
 
-  if (currentEditIndex !== null) {
-    updateTeam(currentEditIndex);
-  } else {
-    addTeam();
-  }
+    // Añadir eventos a los botones
+    addDeleteEvent(newRow.querySelector('.btn-delete'));
+    addEditEvent(newRow.querySelector('.btn-edit'));
+  };
 
-  teamForm.reset();
-  resetFormState();
+  // Función para agregar un nuevo equipo
+  const addTeam = () => {
+    const name = prompt('Ingrese el nombre del equipo:', 'Nuevo Equipo');
+    const city = prompt('Ingrese la ciudad del equipo:', 'Ciudad');
+    if (name && city) {
+      addTeamToTable(name, city, tableBody.children.length + 1);
+      saveTeams();
+    }
+  };
+
+  // Función para eliminar un equipo
+  const deleteTeam = (button) => {
+    const row = button.closest('tr');
+    row.remove();
+
+    // Actualizar numeración de las filas
+    Array.from(tableBody.children).forEach((row, index) => {
+      row.firstElementChild.textContent = index + 1;
+    });
+    saveTeams();
+  };
+
+  // Función para editar un equipo
+  const editTeam = (button) => {
+    const row = button.closest('tr');
+    const name = row.children[1].textContent;
+    const city = row.children[2].textContent;
+
+    const newName = prompt('Ingrese el nuevo nombre del equipo:', name);
+    const newCity = prompt('Ingrese la nueva ciudad del equipo:', city);
+
+    if (newName && newCity) {
+      row.children[1].textContent = newName;
+      row.children[2].textContent = newCity;
+      saveTeams();
+    }
+  };
+
+  // Añadir evento de eliminación a un botón específico
+  const addDeleteEvent = (button) => {
+    button.addEventListener('click', () => deleteTeam(button));
+  };
+
+  // Añadir evento de edición a un botón específico
+  const addEditEvent = (button) => {
+    button.addEventListener('click', () => editTeam(button));
+  };
+
+  // Añadir eventos a los botones ya existentes
+  document.querySelectorAll('.btn-delete').forEach(addDeleteEvent);
+  document.querySelectorAll('.btn-edit').forEach(addEditEvent);
+
+  // Evento para agregar equipo
+  addButton.addEventListener('click', addTeam);
+
+  // Cargar equipos guardados al cargar la página
   loadTeams();
 });
-
-// Guardar equipo en LocalStorage
-function addTeam() {
-  const teams = getTeams();
-  const team = {
-    name: teamNameInput.value,
-    coach: teamCoachInput.value,
-    category: teamCategorySelect.value,
-  };
-  teams.push(team);
-  localStorage.setItem("teams", JSON.stringify(teams));
-}
-
-// Actualizar un equipo en LocalStorage
-function updateTeam(index) {
-  const teams = getTeams();
-  teams[index] = {
-    name: teamNameInput.value,
-    coach: teamCoachInput.value,
-    category: teamCategorySelect.value,
-  };
-  localStorage.setItem("teams", JSON.stringify(teams));
-  currentEditIndex = null;
-}
-
-// Cargar y mostrar equipos
-function loadTeams() {
-  const teams = getTeams();
-
-  // Limpiar lista existente
-  teamList.innerHTML = "";
-
-  // Generar elementos para cada equipo
-  teams.forEach((team, index) => {
-    const li = document.createElement("li");
-
-    const text = document.createElement("span");
-    text.textContent = `${team.name} (Entrenador: ${team.coach}, Categoría: ${team.category})`;
-
-    const editBtn = document.createElement("button");
-    editBtn.textContent = "Editar";
-    editBtn.classList.add("edit");
-    editBtn.addEventListener("click", () => editTeam(index));
-
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "Eliminar";
-    deleteBtn.addEventListener("click", () => deleteTeam(index));
-
-    li.appendChild(text);
-    li.appendChild(editBtn);
-    li.appendChild(deleteBtn);
-    teamList.appendChild(li);
-  });
-}
-
-// Obtener equipos de LocalStorage
-function getTeams() {
-  return JSON.parse(localStorage.getItem("teams")) || [];
-}
-
-// Editar un equipo
-function editTeam(index) {
-  const teams = getTeams();
-  const team = teams[index];
-
-  teamNameInput.value = team.name;
-  teamCoachInput.value = team.coach;
-  teamCategorySelect.value = team.category;
-
-  currentEditIndex = index;
-
-  addTeamBtn.classList.add("hidden");
-  updateTeamBtn.classList.remove("hidden");
-}
-
-// Eliminar un equipo
-function deleteTeam(index) {
-  const teams = getTeams();
-  teams.splice(index, 1);
-  localStorage.setItem("teams", JSON.stringify(teams));
-  loadTeams();
-}
-
-// Restablecer estado del formulario
-function resetFormState() {
-  addTeamBtn.classList.remove("hidden");
-  updateTeamBtn.classList.add("hidden");
-}
