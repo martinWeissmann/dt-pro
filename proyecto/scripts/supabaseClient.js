@@ -1,6 +1,46 @@
-import { createClient } from '@supabase/supabase-js';
+// Conexión con Supabase
+const supabaseUrl = 'https://imokfxicqzmedegxskxp.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imltb2tmeGljcXptZWRlZ3hz' ;
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-const SUPABASE_URL = 'https://<https://imokfxicqzmedegxskxp.supabase.co>.';
-const SUPABASE_ANON_KEY = '<eeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imltb2tmeGljcXptZWRlZ3hza3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTY0MTMsImV4cCI6MjA1Mjg5MjQxM30.Hu763dw72zipJztCLyKy66fuwoW0_GTaLkw8PwKb_8s>';
+// Manejar el formulario de inicio de sesión
+const loginForm = document.getElementById('login-form');
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('password').value;
 
-export const supabase = createClient(SUPABASE_URL, );
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    alert('¡Inicio de sesión exitoso!');
+    console.log(data);
+  }
+});
+
+// Manejar el registro de usuario
+const signupLink = document.getElementById('signup-link');
+signupLink.addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const email = prompt('Introduce tu correo electrónico:');
+  const password = prompt('Introduce tu contraseña:');
+
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+  });
+
+  if (error) {
+    alert('Error: ' + error.message);
+  } else {
+    alert('¡Registro exitoso! Revisa tu correo para verificar tu cuenta.');
+    console.log(data);
+  }
+});
