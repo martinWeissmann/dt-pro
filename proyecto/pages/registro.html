@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registro e Inicio de Sesión</title>
-  <link rel="stylesheet" href="../styles/acceder.css">
+  <link rel="stylesheet" href="..//acceder/styles.css">
 </head>
 <body>
   <div class="container">
@@ -88,7 +88,7 @@
           message.textContent = 'Registro exitoso. Redirigiendo...';
           message.style.color = 'green';
           setTimeout(() => {
-            window.location.href = 'pagina-principal.html'; // Página principal después del registro
+            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html"; // Página principal después del registro
           }, 2000);
         }
       } catch (err) {
@@ -112,7 +112,7 @@
           message.textContent = 'Inicio de sesión exitoso. Redirigiendo...';
           message.style.color = 'green';
           setTimeout(() => {
-            window.location.href = 'dashboard.html'; // Página principal después del inicio de sesión
+            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html"; // Página principal después del inicio de sesión
           }, 2000);
         }
       } catch (err) {
