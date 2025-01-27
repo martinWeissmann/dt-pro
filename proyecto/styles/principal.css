@@ -61,6 +61,21 @@ body {
   transform: scale(1.1);
 }
 
+.nav-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1.1rem;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.nav-btn:hover {
+  background-color: #ffd700;
+}
+
 /* Hero Section */
 .hero {
   background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
@@ -172,6 +187,29 @@ section ul {
 
 .btn:hover {
   background: #0f57c4;
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Botón de Cerrar sesión */
+.logout-btn {
+  display: inline-block;
+  background: none;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 0.8rem 1.8rem;
+  text-decoration: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 1.2rem;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.logout-btn:hover {
+  background-color: #000000; /* Color amarillo al pasar el cursor */
+  color: #333;
   transform: scale(1.05);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
