@@ -59,6 +59,7 @@
         .from('teams')
         .select('*')
         .eq('entrenador_id', user.id); // Filtrar por 'entrenador_id'
+        console.log( "63",error)
 
       if (error) {
         console.error('Error cargando equipos:', error);
