@@ -1,80 +1,210 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DT PRO - Partidos</title>
-    <link rel="stylesheet" href="..//styles/partidos.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Partidos</title>
+  <link rel="stylesheet" href="../styles/partidos.css">
 </head>
 <body>
-    <header>
-        <h1>DT PRO - Gestión de Partidos</h1>
-        <nav>
-            <a href="equipos.html">Equipos</a>
-            <a href="jugadores.html">Jugadores</a>
-            <a href="partidos.html" class="active">Partidos</a>
-           
-        </nav>
-    </header>
-    <main>
-        <section class="partidos-container">
-            <h2>Lista de Partidos</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Fecha</th>
-                        <th>Equipo Local</th>
-                        <th>Equipo Visitante</th>
-                        <th>Resultado</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="partidos-list">
-                    <!-- Aquí se agregan los partidos -->
-                </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="5"></td>
-                        <td>
-                            <ul>
-                                <li>Ganados: <span id="partidos-ganados">0</span></li>
-                                <li>Perdidos: <span id="partidos-perdidos">0</span></li>
-                                <li>Empatados: <span id="partidos-empatados">0</span></li>
-                            </ul>
-                        </td>
-                    </tr>
-                </tfoot>
-            </table>
-            <button class="btn-add" onclick="mostrarFormulario()">Agregar Partido</button>
-        </section>
+  <header>
+    <h1>DT PRO - Gestión de Partidos</h1>
+    <nav>
+      <a href="equipos.html">Equipos</a>
+      <a href="jugadores.html">Jugadores</a>
+      <a href="partidos.html" class="active">Partidos</a>
+      <a href="estadisticas.html">Estadísticas</a>
+    </nav>
+  </header>
 
-        <!-- Formulario para agregar un partido -->
-        <section id="formulario" style="display:none;">
-            <h2>Agregar Partido</h2>
-            <form id="partido-form">
-                <label for="fecha">Fecha:</label>
-                <input type="date" id="fecha" required>
-                
-                <label for="equipoLocal">Equipo Local:</label>
-                <input type="text" id="equipoLocal" required>
-                
-                <label for="equipoVisitante">Equipo Visitante:</label>
-                <input type="text" id="equipoVisitante" required>
-                
-                <label for="resultado">Resultado:</label>
-                <select id="resultado">
-                    <option value="Victoria">Victoria</option>
-                    <option value="Derrota">Derrota</option>
-                    <option value="Empate">Empate</option>
-                </select>
-                
-                <button type="submit">Guardar Partido</button>
-                <button type="button" onclick="cerrarFormulario()">Cancelar</button>
-            </form>
-        </section>
-    </main>
-    <footer></footer>
-    <script src="..//scripts/partidos.js"></script>
+  <main>
+    <div class="container">
+      <h1>Gestión de Partidos</h1>
+      <p id="user-email">Usuario: <span id="email"></span></p>
+      <button id="logout-btn">Cerrar Sesión</button>
+
+      <div>
+        <p><strong>Victorias:</strong> <span id="wins">0</span></p>
+        <p><strong>Empates:</strong> <span id="losses">0</span></p>
+        <p><strong>Derrotas:</strong> <span id="draws">0</span></p>
+        <p><strong>Goles a Favor:</strong> <span id="goalsFor">0</span></p>
+        <p><strong>Goles en Contra:</strong> <span id="goalsAgainst">0</span></p>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Local</th>
+            <th>Visitante</th>
+            <th>Resultado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <button class="btn-add">Agregar Partido</button>
+    </div>
+  </main>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
+    const supa = createClient(supabaseUrl, supabaseKey);
+
+    const addButton = document.querySelector('.btn-add');
+    const tableBody = document.querySelector('table tbody');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userEmail = document.getElementById('email');
+    const winsElement = document.getElementById('wins');
+    const lossesElement = document.getElementById('losses');
+    const drawsElement = document.getElementById('draws');
+    const goalsForElement = document.getElementById('goalsFor');
+    const goalsAgainstElement = document.getElementById('goalsAgainst');
+
+    // Obtener usuario actual
+    const getUser = async () => {
+      const { data: { user }, error } = await supa.auth.getUser();
+      if (error || !user) {
+        alert('Por favor, inicia sesión.');
+        window.location.href = 'registro.html';
+      }
+      userEmail.textContent = user.email;
+      return user;
+    };
+
+    // Cargar partidos
+    const loadMatches = async () => {
+      const user = await getUser();
+      const { data: matches, error } = await supa
+        .from('Partidos')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error cargando partidos:', error);
+        return;
+      }
+
+      let wins = 0;
+      let losses = 0;
+      let draws = 0;
+      let goalsFor = 0;
+      let goalsAgainst = 0;
+
+      tableBody.innerHTML = '';
+      matches.forEach((match, index) => {
+        addMatchToTable(match.local, match.visitante, match.resultado, index + 1, match.id);
+
+        // Calcular partidos ganados, perdidos y empatados
+        const [localGoals, visitanteGoals] = match.resultado.split('-').map(Number);
+
+        if (localGoals > visitanteGoals) {
+          wins++;
+        } else if (localGoals < visitanteGoals) {
+          losses++;
+        } else {
+          draws++;
+        }
+
+        // Contar los goles a favor y en contra
+        goalsFor += localGoals;
+        goalsAgainst += visitanteGoals;
+      });
+
+      // Actualizar los contadores en la interfaz
+      winsElement.textContent = wins;
+      lossesElement.textContent = losses;
+      drawsElement.textContent = draws;
+      goalsForElement.textContent = goalsFor;
+      goalsAgainstElement.textContent = goalsAgainst;
+    };
+
+    // Guardar partido
+    const saveMatch = async (local, visitante, resultado) => {
+      const user = await getUser();
+      const { error } = await supa.from('Partidos').insert({
+        local: local,
+        visitante: visitante,
+        resultado: resultado,
+        user_id: user.id,
+      });
+
+      if (error) {
+        console.error('Error guardando partido:', error);
+      } else {
+        loadMatches();
+      }
+    };
+
+    // Eliminar partido
+    const deleteMatch = async (id) => {
+      const { error } = await supa.from('Partidos').delete().match({ id: id });
+      if (error) {
+        console.error('Error eliminando partido:', error);
+      } else {
+        loadMatches();
+      }
+    };
+
+    // Actualizar partido
+    const updateMatch = async (id, local, visitante, resultado) => {
+      const { error } = await supa
+        .from('Partidos')
+        .update({ local: local, visitante: visitante, resultado: resultado })
+        .eq('id', id);
+      if (error) {
+        console.error('Error actualizando partido:', error);
+      } else {
+        loadMatches(); // Recargar partidos para mostrar los cambios
+      }
+    };
+
+    // Agregar partido a la tabla
+    const addMatchToTable = (local, visitante, resultado, number, id) => {
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${number}</td>
+        <td contenteditable="false">${local}</td>
+        <td contenteditable="false">${visitante}</td>
+        <td contenteditable="false">${resultado}</td>
+        <td>
+          <button class="btn-delete">Eliminar</button>
+        </td>
+      `;
+      tableBody.appendChild(newRow);
+
+      newRow.querySelector('.btn-delete').addEventListener('click', () => {
+        if (confirm('¿Seguro que deseas eliminar este partido?')) {
+          deleteMatch(id);
+        }
+      });
+    };
+
+    // Agregar nuevo partido
+    const addMatch = async () => {
+      const local = prompt('Ingrese el nombre del equipo local:', 'Equipo Local');
+      const visitante = prompt('Ingrese el nombre del equipo visitante:', 'Equipo Visitante');
+      const resultado = prompt('Ingrese el resultado del partido:', '0-0');
+      if (local && visitante && resultado) {
+        await saveMatch(local, visitante, resultado);
+      } else {
+        alert('Todos los campos deben estar completos.');
+      }
+    };
+
+    // Cerrar sesión
+    logoutBtn.addEventListener('click', async () => {
+      await supa.auth.signOut();
+      window.location.href = 'registro.html';
+    });
+
+    // Cargar partidos al inicio
+    window.addEventListener('DOMContentLoaded', loadMatches);
+    addButton.addEventListener('click', addMatch);
+  </script>
 </body>
 </html>

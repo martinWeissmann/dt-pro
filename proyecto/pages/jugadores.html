@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,11 +16,21 @@
       <a href="estadisticas.html">Estadísticas</a>
     </nav>
   </header>
+
   <main>
     <div class="container">
       <h1>Gestión de Jugadores</h1>
       <p id="user-email">Usuario: <span id="email"></span></p>
       <button id="logout-btn">Cerrar Sesión</button>
+
+      <label for="position-filter">Filtrar por posición:</label>
+      <select id="position-filter">
+        <option value="">Todas</option>
+        <option value="Portero">Portero</option>
+        <option value="Defensor">Defensor</option>
+        <option value="Centrocampista">Centrocampista</option>
+        <option value="Delantero">Delantero</option>
+      </select>
 
       <table>
         <thead>
@@ -35,9 +45,8 @@
         <tbody></tbody>
       </table>
 
-      <p><strong>Promedio de Edad:</strong> <span id="avg-age">0</span> años</p>
-
       <button class="btn-add">Agregar Jugador</button>
+      <p id="average-age">Promedio de Edad: </p>
     </div>
   </main>
 
@@ -47,13 +56,13 @@
     const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
     const supa = createClient(supabaseUrl, supabaseKey);
-    
+
     const addButton = document.querySelector('.btn-add');
     const tableBody = document.querySelector('table tbody');
     const logoutBtn = document.getElementById('logout-btn');
     const userEmail = document.getElementById('email');
-    const avgAgeSpan = document.getElementById('avg-age');
 
+    // Obtener usuario actual
     const getUser = async () => {
       const { data: { user }, error } = await supa.auth.getUser();
       if (error || !user) {
@@ -64,12 +73,33 @@
       return user;
     };
 
+    // Función para calcular y mostrar el promedio de edad
+    const calculateAverageAge = (players) => {
+      if (players.length === 0) {
+        document.getElementById('average-age').textContent = 'Promedio de Edad: N/A';
+        return;
+      }
+
+      const totalAge = players.reduce((sum, player) => sum + parseInt(player.edad), 0);
+      const averageAge = totalAge / players.length;
+      document.getElementById('average-age').textContent = `Promedio de Edad: ${averageAge.toFixed(2)}`;
+    };
+
+    // Cargar jugadores con cálculo del promedio de edad
     const loadPlayers = async () => {
       const user = await getUser();
-      const { data: players, error } = await supa
+      const positionFilter = document.getElementById('position-filter').value; // Obtener el valor del filtro de posición
+
+      let query = supa
         .from('Jugadores')
         .select('*')
-        .eq('user_id', user.id);
+        .eq('user_id', user.id); // Cargar solo los jugadores del usuario
+
+      if (positionFilter) {
+        query = query.eq('posicion', positionFilter); // Filtrar por posición si se seleccionó una
+      }
+
+      const { data: players, error } = await query;
 
       if (error) {
         console.error('Error cargando jugadores:', error);
@@ -77,23 +107,20 @@
       }
 
       tableBody.innerHTML = '';
-
-      let totalAge = 0;
-
       players.forEach((player, index) => {
-        totalAge += player.edad;
         addPlayerToTable(player.nombre, player.edad, player.posicion, index + 1, player.id);
       });
 
-      const avgAge = players.length > 0 ? (totalAge / players.length).toFixed(1) : 0;
-      avgAgeSpan.textContent = avgAge;
+      // Calcular y mostrar el promedio de edad
+      calculateAverageAge(players);
     };
 
+    // Guardar jugador
     const savePlayer = async (name, age, position) => {
       const user = await getUser();
       const { error } = await supa.from('Jugadores').insert({
         nombre: name,
-        edad: parseInt(age),
+        edad: age,
         posicion: position,
         user_id: user.id,
       });
@@ -105,85 +132,87 @@
       }
     };
 
+    // Eliminar jugador
     const deletePlayer = async (id) => {
       const { error } = await supa.from('Jugadores').delete().match({ id: id });
-
       if (error) {
         console.error('Error eliminando jugador:', error);
       } else {
-        console.log('Jugador eliminado exitosamente');
         loadPlayers();
       }
     };
 
+    // Actualizar jugador
     const updatePlayer = async (id, name, age, position) => {
       const { error } = await supa
         .from('Jugadores')
-        .update({ nombre: name, edad: parseInt(age), posicion: position })
+        .update({ nombre: name, edad: age, posicion: position })
         .eq('id', id);
-        
       if (error) {
         console.error('Error actualizando jugador:', error);
       } else {
-        loadPlayers();
+        loadPlayers(); // Recargar jugadores para mostrar los cambios
       }
     };
 
+    // Agregar jugador a la tabla
     const addPlayerToTable = (name, age, position, number, id) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
         <td>${number}</td>
-        <td contenteditable="true">${name}</td>
-        <td contenteditable="true">${age}</td>
-        <td contenteditable="true">${position}</td>
+        <td contenteditable="false">${name}</td>
+        <td contenteditable="false">${age}</td>
+        <td contenteditable="false">${position}</td>
         <td>
-          <button class="btn-edit">Editar</button>
           <button class="btn-delete">Eliminar</button>
         </td>
       `;
       tableBody.appendChild(newRow);
 
       newRow.querySelector('.btn-edit').addEventListener('click', () => {
-        const newName = newRow.children[1].textContent.trim();
-        const newAge = newRow.children[2].textContent.trim();
-        const newPosition = newRow.children[3].textContent.trim();
+        const newName = newRow.children[1].textContent.trim();  // Obtener el valor editado de la celda del nombre
+        const newAge = newRow.children[2].textContent.trim();   // Obtener el valor editado de la celda de la edad
+        const newPosition = newRow.children[3].textContent.trim(); // Obtener el valor editado de la celda de la posición
 
-        if (newName && newAge && newPosition && !isNaN(newAge) && parseInt(newAge) > 0) {
-          updatePlayer(id, newName, newAge, newPosition);
+        // Verificar si todos los campos tienen valor
+        if (newName && newAge && newPosition) {
+          updatePlayer(id, newName, newAge, newPosition); // Actualizar jugador con los nuevos valores
         } else {
-          alert('Los datos ingresados no son válidos.');
+          alert('Todos los campos deben estar completos.');
         }
       });
 
       newRow.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm('¿Seguro que deseas eliminar este jugador?')) {
-          deletePlayer(id);
+          deletePlayer(id); // Eliminar jugador si se confirma
         }
       });
     };
 
+    // Agregar nuevo jugador
     const addPlayer = async () => {
       const name = prompt('Ingrese el nombre del jugador:', 'Nuevo Jugador');
-      const age = prompt('Ingrese la edad del jugador:', '18');
+      const age = prompt('Ingrese la edad del jugador:', '20');
       const position = prompt('Ingrese la posición del jugador:', 'Delantero');
-
-      if (name && age && position && !isNaN(age) && parseInt(age) > 0) {
+      if (name && age && position) {
         await savePlayer(name, age, position);
       } else {
-        alert('Datos inválidos. Asegúrese de ingresar una edad numérica válida.');
+        alert('Todos los campos deben estar completos.');
       }
     };
 
+    // Cerrar sesión
     logoutBtn.addEventListener('click', async () => {
-      const { error } = await supa.auth.signOut();
-      if (error) {
-        console.error('Error cerrando sesión:', error);
-      }
+      await supa.auth.signOut();
       window.location.href = 'registro.html';
     });
 
+    // Cargar jugadores al inicio
+    window.addEventListener('DOMContentLoaded', loadPlayers);
     addButton.addEventListener('click', addPlayer);
-    loadPlayers();
+
+    // Escuchar cambios en el filtro de posición
+    document.getElementById('position-filter').addEventListener('change', loadPlayers);
   </script>
 </body>
 </html>

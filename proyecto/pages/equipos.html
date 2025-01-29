@@ -96,7 +96,7 @@
       // Si ya tiene un equipo, mostrarlo
       if (teams.length > 0) {
         const team = teams[0]; // Solo debe haber un equipo
-        addTeamToTable(team.nombre_equipo, team.ciudad, 1, team.id);
+        addTeamToTable(team.nombre_equipo, team.ciudad, 1, team.nombre_equipo); // Usar nombre_equipo como ID
       }
     };
 
@@ -124,23 +124,26 @@
     };
 
     // Eliminar equipo en Supabase
-    const deleteTeam = async (id) => {
-      const { error } = await supa.from('Equipos').delete().match({ id: id });
-      
+    const deleteTeam = async (name) => {
+      console.log("Eliminando equipo con nombre:", name); // Verificar que el nombre se pasa correctamente
+      const { data, error } = await supa.from('Equipos').delete().match({ nombre_equipo: name });
+
       if (error) {
-        console.error('Error eliminando equipo:', error);
+        console.error('Error eliminando equipo:', error.message);
+      } else if (data && data.length === 0) {
+        console.log('No se encontró el equipo con nombre:', name);
       } else {
-        console.log('Equipo eliminado exitosamente');
+        console.log('Equipo eliminado correctamente:', data);
         loadTeams(); // Actualizar equipos después de la eliminación
       }
     };
 
     // Actualizar equipo en Supabase
-    const updateTeam = async (id, name, city) => {
+    const updateTeam = async (name, city) => {
       const { error } = await supa
         .from('Equipos')
         .update({ nombre_equipo: name, ciudad: city })
-        .eq('id', id);
+        .eq('nombre_equipo', name); // Usar nombre_equipo como criterio
       if (error) {
         console.error('Error actualizando equipo:', error);
       } else {
@@ -149,14 +152,14 @@
     };
 
     // Agregar equipo a la tabla
-    const addTeamToTable = (name, city, number, id) => {
+    const addTeamToTable = (name, city, number, teamName) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
         <td>${number}</td>
-        <td contenteditable="true">${name}</td>
-        <td contenteditable="true">${city}</td>
+        <td contenteditable="false">${name}</td>
+        <td contenteditable="false">${city}</td>
         <td>
-          <button class="btn-edit">Editar</button>
+      
           <button class="btn-delete">Eliminar</button>
         </td>
       `;
@@ -167,15 +170,15 @@
         const newName = newRow.children[1].textContent.trim();
         const newCity = newRow.children[2].textContent.trim();
         if (newName && newCity) {
-          updateTeam(id, newName, newCity);
+          updateTeam(newName, newCity);
         } else {
           alert('El nombre y la ciudad no pueden estar vacíos.');
         }
       });
 
       newRow.querySelector('.btn-delete').addEventListener('click', () => {
-        if (confirm('¿Seguro que deseas eliminar este equipo?')) {
-          deleteTeam(id);
+        if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
+          deleteTeam(teamName);  // Pasar el nombre del equipo a la función de eliminación
         }
       });
     };
