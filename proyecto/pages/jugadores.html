@@ -1,48 +1,176 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DT PRO - Jugadores</title>
-    <link rel="stylesheet" href="../styles/jugadores.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Jugadores</title>
+  <link rel="stylesheet" href="..//styles/jugadores.css">
 </head>
+<header>
+  <h1>DT PRO - Gestión de Jugadores</h1>
+  <nav>
+    <a href="equipos.html">Equipos</a>
+    <a href="jugadores.html" class="active">Jugadores</a>
+    <a href="partidos.html">Partidos</a>
+  </nav>
+</header>
+<main>
 <body>
-    <header>
-        <h1>DT PRO - Gestión de Jugadores</h1>
-        <nav>
-            <a href="equipos.html">Equipos</a>
-            <a href="jugadores.html" class="active">Jugadores</a>
-            <a href="partidos.html">Partidos</a>
-            <a href="estadisticas.html">Estadísticas</a>
-        </nav>
-    </header>
-    <main>
-        <section class="jugadores-container">
-            <h2>Lista de Jugadores</h2>
-            <div>
-                <h3>Promedio de Edad: <span id="average-age">0</span></h3>
-            </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nombre</th>
-                        <th>Edad</th>
-                        <th>Posición</th>
-                        <th>Equipo</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Jugadores se cargarán aquí -->
-                </tbody>
-            </table>
-            <button class="btn-add">Agregar Jugador</button>
-        </section>
-    </main>
-    <footer>
-       
-    </footer>
-    <script src="..//scripts/jugadores.js"></script>
+  <div class="container">
+    <h1>Gestión de Jugadores</h1>
+    <p id="user-email">: <span id="email"></span></p>
+    <button id="logout-btn">Cerrar Sesión</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Posición</th>
+          <th>Edad</th>
+          <th>Equipo</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <button class="btn-add">Agregar Jugador</button>
+  </div>
+
+  <script type="module">
+    // Importar cliente de Supabase
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    // Conexión con Supabase
+    const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
+    const supa = createClient(supabaseUrl, supabaseKey);
+
+    // Elementos del DOM
+    const addButton = document.querySelector('.btn-add');
+    const tableBody = document.querySelector('table tbody');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userEmail = document.getElementById('email');
+
+    // Obtener usuario actual
+    const getUser = async () => {
+      const { data: { user }, error } = await supa.auth.getUser();
+      if (error || !user) {
+        alert('Por favor, inicia sesión.');
+        window.location.href = 'registro.html'; // Redirige al login si no está autenticado
+      }
+      userEmail.textContent = user.email;
+      return user;
+    };
+
+    // Cargar jugadores desde la base de datos
+    const loadPlayers = async () => {
+  const user = await getUser();
+  const { data: players, error } = await supa
+    .from('Jugadores')
+    .select('*')
+    .eq('user_id', user.id); // Asegura que solo se carguen jugadores del usuario actual
+
+  if (error) {
+    console.error('Error cargando jugadores:', error);
+    return;
+  }
+
+  console.log('Jugadores cargados:', players);  // Verifica si los jugadores se cargan correctamente
+
+  // Limpiar la tabla antes de recargar los datos
+  tableBody.innerHTML = '';
+
+  // Mostrar los jugadores en la tabla
+  players.forEach((player, index) => {
+    const newRow = document.createElement('tr');
+    newRow.innerHTML = `
+      <td>${index + 1}</td>
+      <td contenteditable="true">${player.nombre}</td>
+      <td contenteditable="true">${player.edad}</td>
+      <td contenteditable="true">${player.posicion}</td>
+      <td contenteditable="true">${player.equipo}</td>
+      <td>
+        <button class="btn-edit">Editar</button>
+        <button class="btn-delete">Eliminar</button>
+      </td>
+    `;
+    tableBody.appendChild(newRow);
+
+    // Eventos de editar y eliminar
+    newRow.querySelector('.btn-edit').addEventListener('click', () => {
+      const newName = newRow.children[1].textContent.trim();
+      const newAge = newRow.children[2].textContent.trim();
+      const newPosition = newRow.children[3].textContent.trim();
+      const newTeam = newRow.children[4].textContent.trim();
+      if (newName && newAge && newPosition && newTeam) {
+        updatePlayer(player.id, newName, newAge, newPosition, newTeam);
+      } else {
+        alert('Todos los campos deben ser llenados.');
+      }
+    });
+
+    newRow.querySelector('.btn-delete').addEventListener('click', () => {
+      if (confirm('¿Seguro que deseas eliminar este jugador?')) {
+        deletePlayer(player.id);
+      }
+    });
+  });
+};
+    // Eliminar jugador de la base de datos
+    const deletePlayer = async (id) => {
+      const { error } = await supa.from('Jugadores').delete().match({ id: id });
+
+      if (error) {
+        console.error('Error eliminando jugador:', error);
+      } else {
+        console.log('Jugador eliminado correctamente');
+        loadPlayers(); // Actualizar la tabla de jugadores
+      }
+    };
+
+    // Actualizar jugador en la base de datos
+    const updatePlayer = async (id, name, position, age, teamId) => {
+      const { error } = await supa
+        .from('Jugadores')
+        .update({ nombre: name, posicion: position, edad: age, equipo: teamId })
+        .eq('id', id);
+
+      if (error) {
+        console.error('Error actualizando jugador:', error);
+      } else {
+        console.log('Jugador actualizado correctamente');
+        loadPlayers(); // Actualizar la tabla
+      }
+    };
+
+    // Agregar nuevo jugador
+    const addPlayer = async () => {
+      const name = prompt('Ingrese el nombre del jugador:', 'Nuevo Jugador');
+      const position = prompt('Ingrese la posición del jugador:', 'Posición');
+      const age = prompt('Ingrese la edad del jugador:', 'Edad');
+      const teamId = prompt('Ingrese el ID del equipo al que pertenece el jugador:', 'ID Equipo');
+      
+      if (name && position && age && teamId) {
+        await savePlayer(name, position, age, teamId);
+      }
+    };
+
+    // Cerrar sesión
+    logoutBtn.addEventListener('click', async () => {
+      const { error } = await supa.auth.signOut();
+      if (error) {
+        console.error('Error cerrando sesión:', error);
+      }
+      window.location.href = 'registro.html'; // Redirige al login
+    });
+
+    // Evento para agregar jugador
+    addButton.addEventListener('click', addPlayer);
+
+    // Cargar jugadores al cargar la página
+    loadPlayers();
+  </script>
 </body>
 </html>

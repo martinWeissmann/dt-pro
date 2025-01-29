@@ -1,108 +1,77 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const addButton = document.querySelector('.btn-add'); // Botón "Agregar Partido"
-    const tableBody = document.querySelector('table tbody'); // Cuerpo de la tabla
-    
-    // Cargar partidos guardados al iniciar
-    const loadMatches = () => {
-        const matches = JSON.parse(localStorage.getItem('matches')) || [];
-        matches.forEach((match, index) => addMatchToTable(match.date, match.localTeam, match.visitorTeam, match.result, index + 1));
-    };
+let partidos = [];
+let partidosGanados = 0;
+let partidosPerdidos = 0;
+let partidosEmpatados = 0;
 
-    // Guardar partidos en localStorage
-    const saveMatches = () => {
-        const matches = Array.from(tableBody.children).map((row) => ({
-            date: row.children[1].textContent,
-            localTeam: row.children[2].textContent,
-            visitorTeam: row.children[3].textContent,
-            result: row.children[4].textContent,
-        }));
-        localStorage.setItem('matches', JSON.stringify(matches));
-    };
+document.getElementById('partido-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const fecha = document.getElementById('fecha').value;
+    const equipoLocal = document.getElementById('equipoLocal').value;
+    const equipoVisitante = document.getElementById('equipoVisitante').value;
+    const resultado = document.getElementById('resultado').value;
 
-    // Agregar un partido a la tabla
-    const addMatchToTable = (date, localTeam, visitorTeam, result, number) => {
-        const newRow = document.createElement('tr');
-        newRow.innerHTML = `
-            <td>${number}</td>
-            <td contenteditable="true">${date}</td>
-            <td contenteditable="true">${localTeam}</td>
-            <td contenteditable="true">${visitorTeam}</td>
-            <td contenteditable="true">${result}</td>
-            <td>
-                <button class="btn-edit">Editar</button>
-                <button class="btn-delete">Eliminar</button>
-            </td>
-        `;
-        tableBody.appendChild(newRow);
-    
-        // Añadir eventos a los botones
-        addDeleteEvent(newRow.querySelector('.btn-delete'));
-        addEditEvent(newRow.querySelector('.btn-edit'));
-    };
+    // Agregar partido al arreglo
+    partidos.push({ fecha, equipoLocal, equipoVisitante, resultado });
+    actualizarEstadisticas(resultado);
 
-    // Función para agregar un nuevo partido
-    const addMatch = () => {
-        const date = prompt('Ingrese la fecha del partido:', 'DD/MM/YYYY');
-        const localTeam = prompt('Ingrese el nombre del equipo local:', 'Equipo Local');
-        const visitorTeam = prompt('Ingrese el nombre del equipo visitante:', 'Equipo Visitante');
-        const result = prompt('Ingrese el resultado del partido:', '0 - 0');
-        if (date && localTeam && visitorTeam && result) {
-            addMatchToTable(date, localTeam, visitorTeam, result, tableBody.children.length + 1);
-            saveMatches();
-        }
-    };
-
-    // Función para eliminar un partido
-    const deleteMatch = (button) => {
-        const row = button.closest('tr');
-        row.remove();
-    
-        // Actualizar numeración de las filas
-        Array.from(tableBody.children).forEach((row, index) => {
-            row.firstElementChild.textContent = index + 1;
-        });
-        saveMatches();
-    };
-
-    // Función para editar un partido
-    const editMatch = (button) => {
-        const row = button.closest('tr');
-        const date = row.children[1].textContent;
-        const localTeam = row.children[2].textContent;
-        const visitorTeam = row.children[3].textContent;
-        const result = row.children[4].textContent;
-    
-        const newDate = prompt('Ingrese la nueva fecha del partido:', date);
-        const newLocalTeam = prompt('Ingrese el nuevo equipo local:', localTeam);
-        const newVisitorTeam = prompt('Ingrese el nuevo equipo visitante:', visitorTeam);
-        const newResult = prompt('Ingrese el nuevo resultado del partido:', result);
-    
-        if (newDate && newLocalTeam && newVisitorTeam && newResult) {
-            row.children[1].textContent = newDate;
-            row.children[2].textContent = newLocalTeam;
-            row.children[3].textContent = newVisitorTeam;
-            row.children[4].textContent = newResult;
-            saveMatches();
-        }
-    };
-
-    // Añadir evento de eliminación a un botón específico
-    const addDeleteEvent = (button) => {
-        button.addEventListener('click', () => deleteMatch(button));
-    };
-
-    // Añadir evento de edición a un botón específico
-    const addEditEvent = (button) => {
-        button.addEventListener('click', () => editMatch(button));
-    };
-
-    // Añadir eventos a los botones ya existentes
-    document.querySelectorAll('.btn-delete').forEach(addDeleteEvent);
-    document.querySelectorAll('.btn-edit').forEach(addEditEvent);
-
-    // Evento para agregar partido
-    addButton.addEventListener('click', addMatch);
-
-    // Cargar partidos guardados al cargar la página
-    loadMatches();
+    // Mostrar partido en la tabla
+    agregarPartidoATabla({ fecha, equipoLocal, equipoVisitante, resultado });
+    cerrarFormulario();
 });
+
+function mostrarFormulario() {
+    document.getElementById('formulario').style.display = 'block';
+}
+
+function cerrarFormulario() {
+    document.getElementById('formulario').style.display = 'none';
+}
+
+function agregarPartidoATabla(partido) {
+    const tbody = document.getElementById('partidos-list');
+    const tr = document.createElement('tr');
+
+    tr.innerHTML = `
+        <td>${partidos.length}</td>
+        <td>${partido.fecha}</td>
+        <td>${partido.equipoLocal}</td>
+        <td>${partido.equipoVisitante}</td>
+        <td>${partido.resultado}</td>
+        <td><button onclick="eliminarPartido(${partidos.length - 1})">Eliminar</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+function eliminarPartido(index) {
+    // Eliminar partido del arreglo y actualizar la tabla
+    partidos.splice(index, 1);
+    partidosGanados = partidos.filter(p => p.resultado === 'Victoria').length;
+    partidosPerdidos = partidos.filter(p => p.resultado === 'Derrota').length;
+    partidosEmpatados = partidos.filter(p => p.resultado === 'Empate').length;
+
+    // Refrescar tabla
+    actualizarTabla();
+    actualizarEstadisticas();
+}
+
+function actualizarTabla() {
+    const tbody = document.getElementById('partidos-list');
+    tbody.innerHTML = '';
+    partidos.forEach((partido, index) => {
+        agregarPartidoATabla(partido);
+    });
+}
+
+function actualizarEstadisticas(resultado = '') {
+    if (resultado === 'Victoria') {
+        partidosGanados++;
+    } else if (resultado === 'Derrota') {
+        partidosPerdidos++;
+    } else if (resultado === 'Empate') {
+        partidosEmpatados++;
+    }
+
+    document.getElementById('partidos-ganados').innerText = partidosGanados;
+    document.getElementById('partidos-perdidos').innerText = partidosPerdidos;
+    document.getElementById('partidos-empatados').innerText = partidosEmpatados;
+}

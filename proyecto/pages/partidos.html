@@ -13,7 +13,7 @@
             <a href="equipos.html">Equipos</a>
             <a href="jugadores.html">Jugadores</a>
             <a href="partidos.html" class="active">Partidos</a>
-            <a href="estadisticas.html">Estadísticas</a>
+           
         </nav>
     </header>
     <main>
@@ -30,18 +30,51 @@
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody>
-                    
-                    <!-- Más partidos -->
+                <tbody id="partidos-list">
+                    <!-- Aquí se agregan los partidos -->
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5"></td>
+                        <td>
+                            <ul>
+                                <li>Ganados: <span id="partidos-ganados">0</span></li>
+                                <li>Perdidos: <span id="partidos-perdidos">0</span></li>
+                                <li>Empatados: <span id="partidos-empatados">0</span></li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tfoot>
             </table>
-            <button class="btn-add">Agregar Partido</button>
+            <button class="btn-add" onclick="mostrarFormulario()">Agregar Partido</button>
+        </section>
+
+        <!-- Formulario para agregar un partido -->
+        <section id="formulario" style="display:none;">
+            <h2>Agregar Partido</h2>
+            <form id="partido-form">
+                <label for="fecha">Fecha:</label>
+                <input type="date" id="fecha" required>
+                
+                <label for="equipoLocal">Equipo Local:</label>
+                <input type="text" id="equipoLocal" required>
+                
+                <label for="equipoVisitante">Equipo Visitante:</label>
+                <input type="text" id="equipoVisitante" required>
+                
+                <label for="resultado">Resultado:</label>
+                <select id="resultado">
+                    <option value="Victoria">Victoria</option>
+                    <option value="Derrota">Derrota</option>
+                    <option value="Empate">Empate</option>
+                </select>
+                
+                <button type="submit">Guardar Partido</button>
+                <button type="button" onclick="cerrarFormulario()">Cancelar</button>
+            </form>
         </section>
     </main>
-    <footer>
-      
-    </footer>
+    <footer></footer>
     <script src="..//scripts/partidos.js"></script>
-
 </body>
 </html>

@@ -6,10 +6,20 @@
   <title>Gestión de Equipos</title>
   <link rel="stylesheet" href="..//styles/equipos.css">
 </head>
+<header>
+  <h1>DT PRO - Gestión de Partidos</h1>
+  <nav>
+      <a href="equipos.html">Equipos</a>
+      <a href="jugadores.html">Jugadores</a>
+      <a href="partidos.html" class="active">Partidos</a>
+     
+  </nav>
+</header>
+<main>
 <body>
   <div class="container">
     <h1>Gestión de Equipos</h1>
-    <p id="user-email">Usuario: <span id="email"></span></p>
+    <p id="user-email">: <span id="email"></span></p>
     <button id="logout-btn">Cerrar Sesión</button>
 
     <table>
@@ -17,6 +27,7 @@
         <tr>
           <th>#</th>
           <th>Nombre del Equipo</th>
+          <th>Ciudad</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -30,10 +41,10 @@
     // Importar cliente de Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Configuración de Supabase
-    const supabaseUrl = 'https://imokfxicqzmedegxskxp.supabase.co'; // Reemplazar con tu URL de Supabase
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imltb2tmeGljcXptZWRlZ3hza3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTY0MTMsImV4cCI6MjA1Mjg5MjQxM30.Hu763dw72zipJztCLyKy66fuwoW0_GTaLkw8PwKb_8s'; // Reemplazar con tu clave de API
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Conexión con Supabase
+    const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
+    const supa = createClient(supabaseUrl, supabaseKey);
 
     // Elementos del DOM
     const addButton = document.querySelector('.btn-add');
@@ -43,7 +54,7 @@
 
     // Obtener usuario actual
     const getUser = async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
+      const { data: { user }, error } = await supa.auth.getUser();
       if (error || !user) {
         alert('Por favor, inicia sesión.');
         window.location.href = 'registro.html'; // Redirige al login si no está autenticado
@@ -52,14 +63,27 @@
       return user;
     };
 
+    // Verificar si el usuario ya tiene un equipo
+    const checkIfUserHasTeam = async () => {
+      const user = await getUser();
+      const { data: teams, error } = await supa
+        .from('Equipos')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) {
+        console.error('Error verificando equipos del usuario:', error);
+      }
+      return teams.length > 0; // Si el usuario tiene un equipo, devuelve true
+    };
+
     // Cargar equipos desde la base de datos
     const loadTeams = async () => {
       const user = await getUser();
-      const { data: teams, error } = await supabase
-        .from('teams')
+      const { data: teams, error } = await supa
+        .from('Equipos')
         .select('*')
-        .eq('entrenador_id', user.id); // Filtrar por 'entrenador_id'
-        console.log( "63",error)
+        .eq('user_id', user.id); // Filtrar por el ID del usuario actual
 
       if (error) {
         console.error('Error cargando equipos:', error);
@@ -69,17 +93,29 @@
       // Limpiar la tabla antes de recargar datos
       tableBody.innerHTML = '';
 
-      // Agregar los equipos a la tabla
-      teams.forEach((team, index) => addTeamToTable(team.name, index + 1, team.id));
+      // Si ya tiene un equipo, mostrarlo
+      if (teams.length > 0) {
+        const team = teams[0]; // Solo debe haber un equipo
+        addTeamToTable(team.nombre_equipo, team.ciudad, 1, team.id);
+      }
     };
 
     // Guardar equipo en Supabase
-    const saveTeam = async (name) => {
+    const saveTeam = async (name, city) => {
       const user = await getUser();
-      const { error } = await supabase.from('teams').insert({
-        name,
-        entrenador_id: user.id, // Usar 'entrenador_id'
+      const hasTeam = await checkIfUserHasTeam();
+
+      if (hasTeam) {
+        alert('¡Ya tienes un equipo! Solo puedes tener uno.');
+        return;
+      }
+
+      const { error } = await supa.from('Equipos').insert({
+        nombre_equipo: name,
+        ciudad: city,
+        user_id: user.id, // Usar el ID del usuario
       });
+
       if (error) {
         console.error('Error guardando equipo:', error);
       } else {
@@ -89,19 +125,21 @@
 
     // Eliminar equipo en Supabase
     const deleteTeam = async (id) => {
-      const { error } = await supabase.from('teams').delete().eq('id', id);
+      const { error } = await supa.from('Equipos').delete().match({ id: id });
+      
       if (error) {
         console.error('Error eliminando equipo:', error);
       } else {
-        loadTeams(); // Actualizar equipos
+        console.log('Equipo eliminado exitosamente');
+        loadTeams(); // Actualizar equipos después de la eliminación
       }
     };
 
     // Actualizar equipo en Supabase
-    const updateTeam = async (id, name) => {
-      const { error } = await supabase
-        .from('teams')
-        .update({ name })
+    const updateTeam = async (id, name, city) => {
+      const { error } = await supa
+        .from('Equipos')
+        .update({ nombre_equipo: name, ciudad: city })
         .eq('id', id);
       if (error) {
         console.error('Error actualizando equipo:', error);
@@ -111,11 +149,12 @@
     };
 
     // Agregar equipo a la tabla
-    const addTeamToTable = (name, number, id) => {
+    const addTeamToTable = (name, city, number, id) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
         <td>${number}</td>
         <td contenteditable="true">${name}</td>
+        <td contenteditable="true">${city}</td>
         <td>
           <button class="btn-edit">Editar</button>
           <button class="btn-delete">Eliminar</button>
@@ -126,10 +165,11 @@
       // Eventos de editar y eliminar
       newRow.querySelector('.btn-edit').addEventListener('click', () => {
         const newName = newRow.children[1].textContent.trim();
-        if (newName) {
-          updateTeam(id, newName);
+        const newCity = newRow.children[2].textContent.trim();
+        if (newName && newCity) {
+          updateTeam(id, newName, newCity);
         } else {
-          alert('El nombre del equipo no puede estar vacío.');
+          alert('El nombre y la ciudad no pueden estar vacíos.');
         }
       });
 
@@ -143,18 +183,19 @@
     // Agregar nuevo equipo
     const addTeam = async () => {
       const name = prompt('Ingrese el nombre del equipo:', 'Nuevo Equipo');
-      if (name) {
-        await saveTeam(name);
+      const city = prompt('Ingrese la ciudad del equipo:', 'Ciudad');
+      if (name && city) {
+        await saveTeam(name, city);
       }
     };
 
     // Cerrar sesión
     logoutBtn.addEventListener('click', async () => {
-      const { error } = await supabase.auth.signOut();
+      const { error } = await supa.auth.signOut();
       if (error) {
         console.error('Error cerrando sesión:', error);
       }
-      window.location.href = 'file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/pages/registro.html'; // Redirige al login
+      window.location.href = 'registro.html'; // Redirige al login
     });
 
     // Evento para agregar equipo
