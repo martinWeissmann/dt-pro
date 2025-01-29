@@ -13,7 +13,7 @@
       <a href="equipos.html">Equipos</a>
       <a href="jugadores.html" class="active">Jugadores</a>
       <a href="partidos.html">Partidos</a>
-      <a href="estadisticas.html">Estadísticas</a>
+   
     </nav>
   </header>
 
@@ -142,19 +142,6 @@
       }
     };
 
-    // Actualizar jugador
-    const updatePlayer = async (id, name, age, position) => {
-      const { error } = await supa
-        .from('Jugadores')
-        .update({ nombre: name, edad: age, posicion: position })
-        .eq('id', id);
-      if (error) {
-        console.error('Error actualizando jugador:', error);
-      } else {
-        loadPlayers(); // Recargar jugadores para mostrar los cambios
-      }
-    };
-
     // Agregar jugador a la tabla
     const addPlayerToTable = (name, age, position, number, id) => {
       const newRow = document.createElement('tr');
@@ -168,19 +155,6 @@
         </td>
       `;
       tableBody.appendChild(newRow);
-
-      newRow.querySelector('.btn-edit').addEventListener('click', () => {
-        const newName = newRow.children[1].textContent.trim();  // Obtener el valor editado de la celda del nombre
-        const newAge = newRow.children[2].textContent.trim();   // Obtener el valor editado de la celda de la edad
-        const newPosition = newRow.children[3].textContent.trim(); // Obtener el valor editado de la celda de la posición
-
-        // Verificar si todos los campos tienen valor
-        if (newName && newAge && newPosition) {
-          updatePlayer(id, newName, newAge, newPosition); // Actualizar jugador con los nuevos valores
-        } else {
-          alert('Todos los campos deben estar completos.');
-        }
-      });
 
       newRow.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm('¿Seguro que deseas eliminar este jugador?')) {

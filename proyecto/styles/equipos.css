@@ -1,68 +1,101 @@
+/* Estilos generales */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  background-color: #f4f4f4;
+  background-color: #ecf0f1;
   color: #333;
 }
 
+/* Header */
 header {
   background-color: #2c3e50;
   color: white;
-  padding: 10px 20px;
+  padding: 15px 20px;
   text-align: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Navbar */
+nav {
+  margin-top: 10px;
 }
 
 nav a {
-  margin: 0 15px;
+  margin: 0 20px;
   color: white;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 15px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+nav a:hover,
+nav a.active {
+  background-color: rgba(255, 255, 255, 0.2);
   text-decoration: none;
 }
 
-nav a.active {
-  text-decoration: underline;
-}
-
-main {
+/* Contenedor de jugadores */
+.jugadores-container {
+  max-width: 800px;
+  margin: 40px auto;
   padding: 20px;
-}
-
-.equipos-container {
   background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  text-align: center;
 }
 
+/* Tablas */
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 table, th, td {
-  border: 1px solid #ccc;
-  padding: 10px;
+  border: 1px solid #ddd;
+  padding: 12px;
   text-align: left;
 }
 
 th {
-  background-color: #2c3e50;
+  background-color: #1e3c72;
+  color: white;
+  text-transform: uppercase;
+}
+
+/* Botones */
+.btn-add, .btn-delete, .btn-edit {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-add {
+  background-color: #27ae60;
   color: white;
 }
 
-.btn-edit, .btn-delete, .btn-add {
-  padding: 8px 12px;
-  margin: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+.btn-add:hover {
+  background-color: #2ecc71;
 }
 
 .btn-edit {
-  background-color: #3498db;
+  background-color: #f39c12;
   color: white;
+}
+
+.btn-edit:hover {
+  background-color: #e67e22;
 }
 
 .btn-delete {
@@ -70,16 +103,29 @@ th {
   color: white;
 }
 
-.btn-add {
-  background-color: #2ecc71;
-  color: white;
+.btn-delete:hover {
+  background-color: #c0392b;
 }
 
-#user-email {
-  display: none;
-}
-
-
+/* Botón de cerrar sesión */
 #logout-btn {
+  background-color: #e74c3c;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+#logout-btn:hover {
+  background-color: #c0392b;
+}
+
+/* Ocultar elementos innecesarios */
+#user-email, #logout-btn {
   display: none;
 }

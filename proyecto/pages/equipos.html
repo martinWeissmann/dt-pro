@@ -4,38 +4,40 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gestión de Equipos</title>
-  <link rel="stylesheet" href="..//styles/equipos.css">
+  <link rel="stylesheet" href="../styles/equipos.css">
 </head>
-<header>
-  <h1>DT PRO - Gestión de Partidos</h1>
-  <nav>
+<body>
+  <header>
+    <h1>DT PRO - Gestión de Partidos</h1>
+    <nav>
       <a href="equipos.html">Equipos</a>
       <a href="jugadores.html">Jugadores</a>
       <a href="partidos.html" class="active">Partidos</a>
       <a href="estadisticas.html">Estadísticas</a>
-  </nav>
-</header>
-<main>
-<body>
-  <div class="container">
-    <h1>Gestión de Equipos</h1>
-    <p id="user-email">Usuario: <span id="email"></span></p>
-    <button id="logout-btn">Cerrar Sesión</button>
+    </nav>
+  </header>
 
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Nombre del Equipo</th>
-          <th>Ciudad</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+  <main>
+    <div class="container">
+      <h1>Gestión de Equipos</h1>
+      <p id="user-email">Usuario: <span id="email"></span></p>
+      <button id="logout-btn">Cerrar Sesión</button>
 
-    <button class="btn-add">Agregar Equipo</button>
-  </div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre del Equipo</th>
+            <th>Ciudad</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <button class="btn-add">Agregar Equipo</button>
+    </div>
+  </main>
 
   <script type="module">
     // Importar cliente de Supabase
@@ -138,19 +140,6 @@
       }
     };
 
-    // Actualizar equipo en Supabase
-    const updateTeam = async (name, city) => {
-      const { error } = await supa
-        .from('Equipos')
-        .update({ nombre_equipo: name, ciudad: city })
-        .eq('nombre_equipo', name); // Usar nombre_equipo como criterio
-      if (error) {
-        console.error('Error actualizando equipo:', error);
-      } else {
-        loadTeams(); // Actualizar equipos
-      }
-    };
-
     // Agregar equipo a la tabla
     const addTeamToTable = (name, city, number, teamName) => {
       const newRow = document.createElement('tr');
@@ -159,23 +148,12 @@
         <td contenteditable="false">${name}</td>
         <td contenteditable="false">${city}</td>
         <td>
-      
           <button class="btn-delete">Eliminar</button>
         </td>
       `;
       tableBody.appendChild(newRow);
 
-      // Eventos de editar y eliminar
-      newRow.querySelector('.btn-edit').addEventListener('click', () => {
-        const newName = newRow.children[1].textContent.trim();
-        const newCity = newRow.children[2].textContent.trim();
-        if (newName && newCity) {
-          updateTeam(newName, newCity);
-        } else {
-          alert('El nombre y la ciudad no pueden estar vacíos.');
-        }
-      });
-
+      // Evento de eliminar
       newRow.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
           deleteTeam(teamName);  // Pasar el nombre del equipo a la función de eliminación
