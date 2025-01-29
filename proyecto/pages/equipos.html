@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -19,21 +19,10 @@
 
   <main>
     <div class="container">
-      <h1>Gestión de Equipos</h1>
       <p id="user-email">Usuario: <span id="email"></span></p>
       <button id="logout-btn">Cerrar Sesión</button>
 
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Nombre del Equipo</th>
-            <th>Ciudad</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+      <div id="team-cards-container" class="team-cards-container"></div>
 
       <button class="btn-add">Agregar Equipo</button>
     </div>
@@ -50,7 +39,7 @@
 
     // Elementos del DOM
     const addButton = document.querySelector('.btn-add');
-    const tableBody = document.querySelector('table tbody');
+    const teamCardsContainer = document.getElementById('team-cards-container');
     const logoutBtn = document.getElementById('logout-btn');
     const userEmail = document.getElementById('email');
 
@@ -92,13 +81,13 @@
         return;
       }
 
-      // Limpiar la tabla antes de recargar datos
-      tableBody.innerHTML = '';
+      // Limpiar los contenedores de tarjetas antes de recargar datos
+      teamCardsContainer.innerHTML = '';
 
       // Si ya tiene un equipo, mostrarlo
       if (teams.length > 0) {
         const team = teams[0]; // Solo debe haber un equipo
-        addTeamToTable(team.nombre_equipo, team.ciudad, 1, team.nombre_equipo); // Usar nombre_equipo como ID
+        addTeamToCards(team.nombre_equipo, team.ciudad, team.nombre_equipo); // Usar nombre_equipo como ID
       }
     };
 
@@ -140,21 +129,19 @@
       }
     };
 
-    // Agregar equipo a la tabla
-    const addTeamToTable = (name, city, number, teamName) => {
-      const newRow = document.createElement('tr');
-      newRow.innerHTML = `
-        <td>${number}</td>
-        <td contenteditable="false">${name}</td>
-        <td contenteditable="false">${city}</td>
-        <td>
-          <button class="btn-delete">Eliminar</button>
-        </td>
+    // Agregar equipo a la vista de tarjetas
+    const addTeamToCards = (name, city, teamName) => {
+      const newCard = document.createElement('div');
+      newCard.classList.add('team-card');
+      newCard.innerHTML = `
+        <h2>${name}</h2>
+        <p>Ciudad: ${city}</p>
+        <button class="btn-delete">Eliminar</button>
       `;
-      tableBody.appendChild(newRow);
+      teamCardsContainer.appendChild(newCard);
 
       // Evento de eliminar
-      newRow.querySelector('.btn-delete').addEventListener('click', () => {
+      newCard.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
           deleteTeam(teamName);  // Pasar el nombre del equipo a la función de eliminación
         }
