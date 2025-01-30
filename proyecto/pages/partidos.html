@@ -13,7 +13,6 @@
       <a href="equipos.html">Equipos</a>
       <a href="jugadores.html">Jugadores</a>
       <a href="partidos.html" class="active">Partidos</a>
-      
     </nav>
   </header>
 
@@ -24,11 +23,13 @@
       <button id="logout-btn">Cerrar Sesión</button>
 
       <div>
+        <p><strong>Partidos Jugados:</strong> <span id="playedMatches">0</span></p>
         <p><strong>Partidos Ganados:</strong> <span id="wins">0</span></p>
         <p><strong>Partidos Perdidos:</strong> <span id="losses">0</span></p>
         <p><strong>Partidos Empatados:</strong> <span id="draws">0</span></p>
         <p><strong>Goles a Favor:</strong> <span id="goalsFor">0</span></p>
         <p><strong>Goles en Contra:</strong> <span id="goalsAgainst">0</span></p>
+        <p><strong>Diferencia de Gol:</strong> <span id="goalDifference">0</span></p>
       </div>
 
       <table>
@@ -59,11 +60,14 @@
     const tableBody = document.querySelector('table tbody');
     const logoutBtn = document.getElementById('logout-btn');
     const userEmail = document.getElementById('email');
+    
+    const playedMatchesElement = document.getElementById('playedMatches');
     const winsElement = document.getElementById('wins');
     const lossesElement = document.getElementById('losses');
     const drawsElement = document.getElementById('draws');
     const goalsForElement = document.getElementById('goalsFor');
     const goalsAgainstElement = document.getElementById('goalsAgainst');
+    const goalDifferenceElement = document.getElementById('goalDifference');
 
     // Obtener usuario actual
     const getUser = async () => {
@@ -99,7 +103,7 @@
       matches.forEach((match, index) => {
         addMatchToTable(match.local, match.visitante, match.resultado, index + 1, match.id);
 
-        // Calcular partidos ganados, perdidos y empatados
+        // Calcular estadísticas
         const [localGoals, visitanteGoals] = match.resultado.split('-').map(Number);
 
         if (localGoals > visitanteGoals) {
@@ -110,17 +114,21 @@
           draws++;
         }
 
-        // Contar los goles a favor y en contra
         goalsFor += localGoals;
         goalsAgainst += visitanteGoals;
       });
 
-      // Actualizar los contadores en la interfaz
+      // Calcular total de partidos jugados
+      const playedMatches = wins + losses + draws;
+
+      // Actualizar la interfaz
+      playedMatchesElement.textContent = playedMatches;
       winsElement.textContent = wins;
       lossesElement.textContent = losses;
       drawsElement.textContent = draws;
       goalsForElement.textContent = goalsFor;
       goalsAgainstElement.textContent = goalsAgainst;
+      goalDifferenceElement.textContent = goalsFor - goalsAgainst; // Cálculo de diferencia de gol
     };
 
     // Guardar partido
@@ -150,27 +158,14 @@
       }
     };
 
-    // Actualizar partido
-    const updateMatch = async (id, local, visitante, resultado) => {
-      const { error } = await supa
-        .from('Partidos')
-        .update({ local: local, visitante: visitante, resultado: resultado })
-        .eq('id', id);
-      if (error) {
-        console.error('Error actualizando partido:', error);
-      } else {
-        loadMatches(); // Recargar partidos para mostrar los cambios
-      }
-    };
-
     // Agregar partido a la tabla
     const addMatchToTable = (local, visitante, resultado, number, id) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
         <td>${number}</td>
-        <td contenteditable="false">${local}</td>
-        <td contenteditable="false">${visitante}</td>
-        <td contenteditable="false">${resultado}</td>
+        <td>${local}</td>
+        <td>${visitante}</td>
+        <td>${resultado}</td>
         <td>
           <button class="btn-delete">Eliminar</button>
         </td>
