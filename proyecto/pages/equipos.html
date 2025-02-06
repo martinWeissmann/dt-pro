@@ -31,7 +31,7 @@
     // Importar cliente de Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Conexión con Supabase
+   
     const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
     const supa = createClient(supabaseUrl, supabaseKey);
@@ -100,7 +100,7 @@
         return;
       }
 
-      const { error } = await supa.from('Equipos').insert({
+      const { error } = await supa.from('Equipos').insert({  // Inserta nuevo equipo
         nombre_equipo: name,
         ciudad: city,
         user_id: user.id, // Usar el ID del usuario
@@ -139,7 +139,7 @@
       `;
       teamCardsContainer.appendChild(newCard);
 
-      // Evento de eliminar
+      // Eliminar Equipo
       newCard.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
           deleteTeam(teamName);  // Pasar el nombre del equipo a la función de eliminación

@@ -40,6 +40,10 @@
         <p>¿No tienes cuenta? <a href="#" id="show-register">Regístrate</a></p>
       </form>
     </div>
+    
+    <!-- Botón de Cerrar Sesión (se oculta inicialmente) -->
+    <button id="logout-button" class="btn hidden">Cerrar Sesión</button>
+
     <p id="message"></p>
   </div>
 
@@ -47,7 +51,6 @@
     // Importar Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Configuración de Supabase
     const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co'; // Reemplazar con tu URL de Supabase
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw'; // Reemplazar con tu clave de API
     const supabase = createClient(supabaseUrl, supabaseKey);
@@ -57,6 +60,7 @@
     const loginForm = document.getElementById('login-form');
     const showRegister = document.getElementById('show-register');
     const showLogin = document.getElementById('show-login');
+    const logoutButton = document.getElementById('logout-button');
     const message = document.getElementById('message');
 
     // Funciones para mostrar/ocultar formularios
@@ -88,7 +92,7 @@
           message.textContent = 'Registro exitoso. Redirigiendo...';
           message.style.color = 'green';
           setTimeout(() => {
-            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html"; // Página principal después del registro
+            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html";
           }, 2000);
         }
       } catch (err) {
@@ -111,14 +115,55 @@
         } else {
           message.textContent = 'Inicio de sesión exitoso. Redirigiendo...';
           message.style.color = 'green';
+
+          // Mostrar el botón de cerrar sesión
+          logoutButton.classList.remove('hidden');
+
           setTimeout(() => {
-            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html"; // Página principal después del inicio de sesión
+            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html";
           }, 2000);
         }
       } catch (err) {
         console.error('Error en el inicio de sesión:', err);
       }
     });
+
+    // Cierre de sesión
+    logoutButton.addEventListener('click', async () => {
+      try {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+          message.textContent = `Error al cerrar sesión: ${error.message}`;
+          message.style.color = 'red';
+        } else {
+          message.textContent = 'Sesión cerrada. Redirigiendo...';
+          message.style.color = 'green';
+
+          // Ocultar botón de cierre de sesión y mostrar formulario de login
+          logoutButton.classList.add('hidden');
+          loginForm.classList.remove('hidden');
+
+          setTimeout(() => {
+            window.location.href = "file:///C:/Users/marti/OneDrive/Documentos/dt-pro/proyecto/index.html";
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error en el cierre de sesión:', err);
+      }
+    });
+
+    // Verificar si hay una sesión activa al cargar la página
+    async function checkSession() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        // Si hay sesión, mostrar botón de cerrar sesión y ocultar formularios
+        logoutButton.classList.remove('hidden');
+        loginForm.classList.add('hidden');
+        registerForm.classList.add('hidden');
+      }
+    }
+
+    checkSession(); // Ejecutar al cargar la página
   </script>
 </body>
 </html>

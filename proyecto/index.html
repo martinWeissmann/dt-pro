@@ -17,7 +17,7 @@
           <li><a href="./pages/jugadores.html">Jugadores</a></li>
           <li><a href="./pages/partidos.html">Partidos</a></li>
           <!-- Sección Cerrar Sesión (ocultada inicialmente) -->
-          <li><button id="logout-btn" class="nav-btn" style="display: none;">Cerrar Sesión</button</a></li>
+          <li><button id="logout-btn" class="nav-btn" style="display: none;">Cerrar Sesión</button></li>
         </ul>
       </nav>
     </div>
@@ -62,35 +62,13 @@
     // Importar cliente de Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-    // Configuración de Supabase
-    const supabaseUrl = 'https://imokfxicqzmedegxskxp.supabase.co'; // Reemplazar con tu URL de Supabase
+    const supabaseUrl = 'https://imokfxicqzmedegxskxp.supabase.co'; 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imltb2tmeGljcXptZWRlZ3hza3hwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTY0MTMsImV4cCI6MjA1Mjg5MjQxM30.Hu763dw72zipJztCLyKy66fuwoW0_GTaLkw8PwKb_8s'; // Reemplazar con tu clave de API
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Elementos del DOM
-    const logoutBtn = document.getElementById('logout-btn');
+   
 
-    // Verificar si hay un usuario autenticado
-    supabase.auth.getSession().then(({ data }) => {
-      if (data?.session) {
-        // Si hay un usuario autenticado, mostrar el botón
-        logoutBtn.style.display = 'block';
-      } else {
-        // Si no hay usuario autenticado, mantenerlo oculto
-        logoutBtn.style.display = 'none';
-      }
-    });
-
-    // Cerrar sesión sin redirigir
-    logoutBtn.addEventListener('click', async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error cerrando sesión:', error);
-      } else {
-        // Ocultar el botón después de cerrar sesión
-        logoutBtn.style.display = 'none';
-      }
-    });
+    
   </script>
 </body>
 </html>
