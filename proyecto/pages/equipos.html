@@ -42,12 +42,12 @@
     const logoutBtn = document.getElementById('logout-btn');
     const userEmail = document.getElementById('email');
 
-    // Obtener usuario actual
+    
     const getUser = async () => {
       const { data: { user }, error } = await supa.auth.getUser();
       if (error || !user) {
         alert('Por favor, inicia sesión.');
-        window.location.href = 'registro.html'; // Redirige al login si no está autenticado
+        window.location.href = 'registro.html'; 
       }
       userEmail.textContent = user.email;
       return user;
