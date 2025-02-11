@@ -53,7 +53,7 @@
       return user;
     };
 
-    // Verificar si el usuario ya tiene un equipo
+    // Ver si el usuario ya tiene un equipo
     const checkIfUserHasTeam = async () => {
       const user = await getUser();
       const { data: teams, error } = await supa
@@ -67,7 +67,7 @@
       return teams.length > 0; // Si el usuario tiene un equipo, devuelve true
     };
 
-    // Cargar equipos desde la base de datos
+    // Cargar desde la base de datos
     const loadTeams = async () => {
       const user = await getUser();
       const { data: teams, error } = await supa
@@ -128,7 +128,6 @@
       }
     };
 
-    // Agregar equipo a la vista de tarjetas
     const addTeamToCards = (name, city, teamName) => {
       const newCard = document.createElement('div');
       newCard.classList.add('team-card');
@@ -142,12 +141,12 @@
       // Eliminar Equipo
       newCard.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
-          deleteTeam(teamName);  // Pasar el nombre del equipo a la función de eliminación
+          deleteTeam(teamName);  // Pasa el nombre del equipo a la función de eliminación
         }
       });
     };
 
-    // Agregar nuevo equipo
+   
     const addTeam = async () => {
       const name = prompt('Ingrese el nombre del equipo:', 'Nuevo Equipo');
       const city = prompt('Ingrese la ciudad del equipo:', 'Ciudad');
@@ -155,16 +154,7 @@
         await saveTeam(name, city);
       }
     };
-
-    // Cerrar sesión
-    logoutBtn.addEventListener('click', async () => {
-      const { error } = await supa.auth.signOut();
-      if (error) {
-        console.error('Error cerrando sesión:', error);
-      }
-      window.location.href = 'registro.html'; // Redirige al login
-    });
-
+    
     // Evento para agregar equipo
     addButton.addEventListener('click', addTeam);
 

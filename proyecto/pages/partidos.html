@@ -69,7 +69,6 @@
     const goalsAgainstElement = document.getElementById('goalsAgainst');
     const goalDifferenceElement = document.getElementById('goalDifference');
 
-    // Obtener usuario actual
     const getUser = async () => {
       const { data: { user }, error } = await supa.auth.getUser();
       if (error || !user) {
