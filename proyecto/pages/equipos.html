@@ -64,7 +64,7 @@
       if (error) {
         console.error('Error verificando equipos del usuario:', error);
       }
-      return teams.length > 0; // Si el usuario tiene un equipo, devuelve true
+      return teams.length > 0; // Si el usuario tiene un equipo
     };
 
     // Cargar desde la base de datos
@@ -80,7 +80,6 @@
         return;
       }
 
-      // Limpiar los contenedores de tarjetas antes de recargar datos
       teamCardsContainer.innerHTML = '';
 
       // Si ya tiene un equipo, mostrarlo

@@ -73,7 +73,6 @@
       return user;
     };
 
-    // calcular y mostrar el promedio de edad
     const calculateAverageAge = (players) => {
       if (players.length === 0) {
         document.getElementById('average-age').textContent = 'Promedio de Edad: N/A';
@@ -142,7 +141,7 @@
       }
     };
 
-    // Agregar jugador a la tabla
+    
     const addPlayerToTable = (name, age, position, number, id) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
