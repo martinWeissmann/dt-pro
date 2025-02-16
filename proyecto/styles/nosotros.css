@@ -60,7 +60,6 @@ body {
   border-radius: 50%;
   bottom: -50px;
   right: -50px;
-  animation: float 7s infinite alternate-reverse ease-in-out;
 }
 
 @keyframes float {

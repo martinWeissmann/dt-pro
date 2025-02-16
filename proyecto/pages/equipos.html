@@ -67,7 +67,6 @@
       return teams.length > 0; // Si el usuario tiene un equipo
     };
 
-    // Cargar desde la base de datos
     const loadTeams = async () => {
       const user = await getUser();
       const { data: teams, error } = await supa
@@ -85,7 +84,7 @@
       // Si ya tiene un equipo, mostrarlo
       if (teams.length > 0) {
         const team = teams[0]; // Solo debe haber un equipo
-        addTeamToCards(team.nombre_equipo, team.ciudad, team.nombre_equipo); // Usar nombre_equipo como ID
+        addTeamToCards(team.nombre_equipo, team.ciudad, team.nombre_equipo); 
       }
     };
 
