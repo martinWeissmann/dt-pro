@@ -152,7 +152,7 @@
       }
     });
 
-    // Verificar si hay una sesión activa al cargar la página
+    // Verificar si hay una sesión activa 
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
