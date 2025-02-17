@@ -103,7 +103,7 @@
         addMatchToTable(match.local, match.visitante, match.resultado, index + 1, match.id);
 
         // Calcular estadísticas
-        const [localGoals, visitanteGoals] = match.resultado.split('-').map(Number);
+        const [localGoals, visitanteGoals] = match.resultado.split('-').map(Number); //Split convierte texto a array
 
         if (localGoals > visitanteGoals) {
           wins++;
@@ -176,17 +176,26 @@
       });
     };
 
-    // Agregar nuevo partido
-    const addMatch = async () => {
-      const local = prompt('Ingrese el nombre del equipo local:', 'Equipo Local');
-      const visitante = prompt('Ingrese el nombre del equipo visitante:', 'Equipo Visitante');
-      const resultado = prompt('Ingrese el resultado del partido:', '0-0');
-      if (local && visitante && resultado) {
-        await saveMatch(local, visitante, resultado);
-      } else {
-        alert('Todos los campos deben estar completos.');
-      }
-    };
+// Agregar nuevo partido
+const addMatch = async () => {
+  const local = prompt('Ingrese el nombre del equipo local:', 'Equipo Local');
+  const visitante = prompt('Ingrese el nombre del equipo visitante:', 'Equipo Visitante');
+  const resultado = prompt('Ingrese el resultado del partido (formato: Número-Número):', '0-0');
+
+  // Validar formato del resultado
+  const resultadoRegex = /^\d+-\d+$/;
+  if (!resultadoRegex.test(resultado)) {
+    alert('Error: Ingrese valores correctos');
+    return;
+  }
+
+  if (local && visitante && resultado) {
+    await saveMatch(local, visitante, resultado);
+  } else {
+    alert('Todos los campos deben estar completos.');
+  }
+};
+
 
     // Cerrar sesión
     logoutBtn.addEventListener('click', async () => {
