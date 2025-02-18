@@ -182,7 +182,6 @@ const addMatch = async () => {
   const visitante = prompt('Ingrese el nombre del equipo visitante:', 'Equipo Visitante');
   const resultado = prompt('Ingrese el resultado del partido (formato: Número-Número):', '0-0');
 
-  // Validar formato del resultado
   const resultadoRegex = /^\d+-\d+$/;
   if (!resultadoRegex.test(resultado)) {
     alert('Error: Ingrese valores correctos');
