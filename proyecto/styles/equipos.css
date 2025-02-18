@@ -34,7 +34,6 @@ nav a {
 
 nav a:hover,
 nav a.active {
-  
   text-decoration: none;
 }
 
@@ -56,7 +55,6 @@ nav a.active {
   text-align: center;
   transition: transform 0.3s ease;
   margin-top: 60px;
-
 }
 
 .team-card:hover {
@@ -73,7 +71,6 @@ nav a.active {
   font-size: 24px;
   color: #7f8c8d;
   margin-top: 50px;
-
 }
 
 .team-card .btn-delete {
@@ -125,6 +122,22 @@ nav a.active {
 
 #logout-btn:hover {
   background-color: #c0392b;
+}
+
+/* Nuevo botón de editar */
+.team-card .btn-edit {
+  margin-top: 30px;
+  padding: 8px 12px;
+  background-color: #3498db;  /* Azul */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.team-card .btn-edit:hover {
+  background-color: #2980b9; /* Azul más oscuro */
 }
 
 /* Ocultar elementos innecesarios */

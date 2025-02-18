@@ -25,7 +25,6 @@
         <p>¿Ya tienes cuenta? <a href="#" id="show-login">Inicia Sesión</a></p>
       </form>
 
-      <!-- Formulario de Inicio de Sesión -->
       <form id="login-form">
         <h2>Inicio de Sesión</h2>
         <div class="form-group">
@@ -48,14 +47,12 @@
   </div>
 
   <script type="module">
-    // Importar Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
     const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co'; 
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw'; // Reemplazar con tu clave de API
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Seleccionar elementos del DOM
     const registerForm = document.getElementById('register-form');
     const loginForm = document.getElementById('login-form');
     const showRegister = document.getElementById('show-register');
@@ -76,7 +73,6 @@
       registerForm.classList.add('hidden');
     });
 
-    // Registro
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('register-email').value;
@@ -152,7 +148,6 @@
       }
     });
 
-    // Verificar si hay una sesión activa 
     async function checkSession() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {

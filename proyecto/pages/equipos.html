@@ -31,7 +31,6 @@
     // Importar cliente de Supabase
     import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-   
     const supabaseUrl = 'https://zeznffvtftfpyintwvjf.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inplem5mZnZ0ZnRmcHlpbnR3dmpmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgxMDg4MzEsImV4cCI6MjA1MzY4NDgzMX0.HAHAJ5N7K5O5X-plI_o8eb3uMV7Yicx7O9k4WwStuLw';
     const supa = createClient(supabaseUrl, supabaseKey);
@@ -42,7 +41,6 @@
     const logoutBtn = document.getElementById('logout-btn');
     const userEmail = document.getElementById('email');
 
-    
     const getUser = async () => {
       const { data: { user }, error } = await supa.auth.getUser();
       if (error || !user) {
@@ -53,7 +51,6 @@
       return user;
     };
 
-    // Ver si el usuario ya tiene un equipo
     const checkIfUserHasTeam = async () => {
       const user = await getUser();
       const { data: teams, error } = await supa
@@ -72,7 +69,7 @@
       const { data: teams, error } = await supa
         .from('Equipos')
         .select('*')
-        .eq('user_id', user.id); // Filtrar por el ID del usuario actual
+        .eq('user_id', user.id); 
 
       if (error) {
         console.error('Error cargando equipos:', error);
@@ -81,7 +78,7 @@
 
       teamCardsContainer.innerHTML = '';
 
-      // Si ya tiene un equipo, mostrarlo
+      
       if (teams.length > 0) {
         const team = teams[0]; // Solo debe haber un equipo
         addTeamToCards(team.nombre_equipo, team.ciudad, team.nombre_equipo); 
@@ -101,7 +98,7 @@
       const { error } = await supa.from('Equipos').insert({  // Inserta nuevo equipo
         nombre_equipo: name,
         ciudad: city,
-        user_id: user.id, // Usar el ID del usuario
+        user_id: user.id, 
       });
 
       if (error) {
@@ -111,9 +108,9 @@
       }
     };
 
-    // Eliminar equipo en Supabase
+    
     const deleteTeam = async (name) => {
-      console.log("Eliminando equipo con nombre:", name); // Verificar que el nombre se pasa correctamente
+      console.log("Eliminando equipo con nombre:", name);
       const { data, error } = await supa.from('Equipos').delete().match({ nombre_equipo: name });
 
       if (error) {
@@ -126,12 +123,31 @@
       }
     };
 
+    
+    const editTeam = async (oldName, oldCity) => {
+      const name = prompt('Ingrese el nuevo nombre del equipo:', oldName);
+      const city = prompt('Ingrese la nueva ciudad del equipo:', oldCity);
+      if (name && city) {
+        const { error } = await supa
+          .from('Equipos')
+          .update({ nombre_equipo: name, ciudad: city })
+          .match({ nombre_equipo: oldName });
+
+        if (error) {
+          console.error('Error actualizando equipo:', error.message);
+        } else {
+          loadTeams(); // Actualizar equipos después de la edición
+        }
+      }
+    };
+
     const addTeamToCards = (name, city, teamName) => {
       const newCard = document.createElement('div');
       newCard.classList.add('team-card');
       newCard.innerHTML = `
         <h2>${name}</h2>
         <p>Ciudad: ${city}</p>
+        <button class="btn-edit">Editar</button>
         <button class="btn-delete">Eliminar</button>
       `;
       teamCardsContainer.appendChild(newCard);
@@ -139,12 +155,16 @@
       // Eliminar Equipo
       newCard.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm(`¿Seguro que deseas eliminar el equipo "${teamName}"?`)) {
-          deleteTeam(teamName);  // Pasa el nombre del equipo a la función de eliminación
+          deleteTeam(teamName);
         }
+      });
+
+      // Editar Equipo
+      newCard.querySelector('.btn-edit').addEventListener('click', () => {
+        editTeam(name, city);
       });
     };
 
-   
     const addTeam = async () => {
       const name = prompt('Ingrese el nombre del equipo:', 'Nuevo Equipo');
       const city = prompt('Ingrese la ciudad del equipo:', 'Ciudad');

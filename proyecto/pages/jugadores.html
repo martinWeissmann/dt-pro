@@ -13,7 +13,6 @@
       <a href="equipos.html">Equipo</a>
       <a href="jugadores.html" class="active">Jugadores</a>
       <a href="partidos.html">Partidos</a>
-   
     </nav>
   </header>
 
@@ -92,7 +91,7 @@
       let query = supa
         .from('Jugadores')
         .select('*')
-        .eq('user_id', user.id); // Cargar solo los jugadores del usuario
+        .eq('user_id', user.id); 
 
       if (positionFilter) {
         query = query.eq('posicion', positionFilter); // Filtrar por posición si se seleccionó una
@@ -141,7 +140,29 @@
       }
     };
 
-    
+    // Editar jugador
+    const editPlayer = async (id, name, age, position) => {
+      const newName = prompt('Ingrese el nuevo nombre del jugador:', name);
+      const newAge = prompt('Ingrese la nueva edad del jugador:', age);
+      const newPosition = prompt('Ingrese la nueva posición del jugador:', position);
+
+      if (newName && newAge && newPosition) {
+        const { error } = await supa.from('Jugadores').update({
+          nombre: newName,
+          edad: newAge,
+          posicion: newPosition,
+        }).match({ id });
+
+        if (error) {
+          console.error('Error actualizando jugador:', error);
+        } else {
+          loadPlayers();
+        }
+      } else {
+        alert('Todos los campos deben estar completos.');
+      }
+    };
+
     const addPlayerToTable = (name, age, position, number, id) => {
       const newRow = document.createElement('tr');
       newRow.innerHTML = `
@@ -150,11 +171,18 @@
         <td contenteditable="false">${age}</td>
         <td contenteditable="false">${position}</td>
         <td>
+          <button class="btn-edit">Editar</button>
           <button class="btn-delete">Eliminar</button>
         </td>
       `;
       tableBody.appendChild(newRow);
 
+      
+      newRow.querySelector('.btn-edit').addEventListener('click', () => {
+        editPlayer(id, name, age, position); // Editar jugador al hacer clic
+      });
+
+      // Agregar evento de eliminar
       newRow.querySelector('.btn-delete').addEventListener('click', () => {
         if (confirm('¿Seguro que deseas eliminar este jugador?')) {
           deletePlayer(id); // Eliminar jugador si se confirma

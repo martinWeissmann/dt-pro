@@ -26,7 +26,6 @@ body {
   margin-top: -50px;
 }
 
-/* Sección Sobre Nosotros */
 .about-section {
   background: linear-gradient(135deg, #1a73e8, #4caf50);
   color: #fff;
@@ -38,7 +37,6 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Efecto sutil de burbujas */
 .about-section::before {
   content: '';
   position: absolute;
@@ -71,7 +69,6 @@ body {
   }
 }
 
-/* Contenido */
 .about-content {
   flex: 1;
   max-width: 50%;
@@ -99,7 +96,6 @@ body {
   color: #ffeb3b;
 }
 
-/* Botón */
 .btn {
   display: inline-block;
   background: #ffeb3b;
@@ -138,7 +134,6 @@ body {
   left: 100%;
 }
 
-/* Imagen */
 .about-image {
   flex: 1;
   max-width: 50%;
