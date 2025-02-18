@@ -80,7 +80,7 @@
 
       const totalAge = players.reduce((sum, player) => sum + parseInt(player.edad), 0);
       const averageAge = totalAge / players.length;
-      document.getElementById('average-age').textContent = `Promedio de Edad: ${averageAge.toFixed(2)}`;
+      document.getElementById('average-age').textContent = `Promedio de Edad: ${averageAge.toFixed(2)}`;  //2 decimales
     };
 
     // Cargar jugadores con cálculo del promedio de edad
