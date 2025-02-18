@@ -130,8 +130,8 @@
       drawsElement.textContent = draws;
       goalsForElement.textContent = goalsFor;
       goalsAgainstElement.textContent = goalsAgainst;
-      goalDifferenceElement.textContent = goalsFor - goalsAgainst; // Cálculo de diferencia de gol
-      pointsElement.textContent = points; // Mostrar puntos
+      goalDifferenceElement.textContent = goalsFor - goalsAgainst; 
+      pointsElement.textContent = points; 
     };
 
     // Guardar partido
@@ -201,7 +201,6 @@
       }
     };
 
-    // Cerrar sesión
     logoutBtn.addEventListener('click', async () => {
       await supa.auth.signOut();
       window.location.href = 'registro.html';
