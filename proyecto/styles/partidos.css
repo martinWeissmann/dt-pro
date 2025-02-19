@@ -127,24 +127,22 @@ th {
 }
 
 .victoria {
-    background-color: #28a745; /* Verde para victoria */
+    background-color: #28a745; 
 }
 
 .derrota {
-    background-color: #dc3545; /* Rojo para derrota */
+    background-color: #dc3545; 
 }
 
 .empate {
-    background-color: #ffc107; /* Amarillo para empate */
+    background-color: #ffc107;
 }
 
-/* Efecto hover */
 .estadistica-item:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* Estilos para los resultados */
 .result-victory {
     color: green;
   }

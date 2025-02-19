@@ -74,9 +74,7 @@ body {
   background-color: #ffd700;
 }
 
-/* Hero Section */
 .hero {
-  background: url('https://via.placeholder.com/1920x600') no-repeat center center/cover;
   color: #fff;
   text-align: center;
   padding: 8rem 2rem;
@@ -169,7 +167,6 @@ section ul {
   color: #333;
 }
 
-/* Botón general */
 .btn {
   display: inline-block;
   background: #1a73e8;
@@ -189,7 +186,6 @@ section ul {
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Botón de Cerrar sesión */
 .logout-btn {
   display: inline-block;
   background: none;
